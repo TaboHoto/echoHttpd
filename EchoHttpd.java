@@ -1,7 +1,6 @@
 /* Copyright(c) 2013 M Hata
    This software is released under the MIT License.
    http://opensource.org/licenses/mit-license.php */
-package tabou.http;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -9,8 +8,6 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import tabou.log.TabouLog;
-import static tabou.log.TabouLog.Log;
 
 public class EchoHttpd {
     static private final int DEFAULT_PROXY_PORT = 8080;
@@ -22,11 +19,10 @@ public class EchoHttpd {
     private ServerSocket serverSocket;
 
     public static void usage() {
-        System.err.println("usage: java tabou.http.EchoHttp [-p port no]");
+        System.err.println("usage: java EchoHttp [-p port no]");
         System.exit(-1);
     }
     public static void main(String[] args) throws Exception{
-        TabouLog.init();
         int localPort = DEFAULT_PROXY_PORT;  /* port no       */
         EchoHttpd echoHttpd = new EchoHttpd();
         int argi = 0;
@@ -54,21 +50,18 @@ public class EchoHttpd {
     public void accrpt(int localPort) throws IOException{
         this.serverSocket = new ServerSocket(localPort);
         while (true) {
-            Log.info("wait:*."+ localPort  +" ...");
+            System.out.println("wait:*."+ localPort  +" ...");
             Socket requestSocket = this.serverSocket.accept();
-            Log.info("accept:" + requestSocket.getInetAddress());
+            System.out.println("accept:" + requestSocket.getInetAddress());
             try{
                 request(requestSocket);
             }catch(Exception e){
-                Log.warning(e.toString());
+                System.err.println(e.toString());
             }finally{
                 requestSocket.close();
             }
-            Log.info("close");
+            System.out.println("close");
         }
-    }
-    public void close() throws IOException{
-        this.serverSocket.close();
     }
     public void request(Socket requestSocket) throws IOException{
         requestSocket.setSoTimeout(1000 * 100);
@@ -77,7 +70,7 @@ public class EchoHttpd {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byteArrayOutputStream.write(RESPONSE);
         String firstLine = readLine(requestIn,byteArrayOutputStream);
-        Log.info(firstLine);
+        System.out.println(firstLine);
         int contentLength = 0;
         while(true){
             String line = readLine(requestIn,byteArrayOutputStream);
@@ -86,7 +79,7 @@ public class EchoHttpd {
             }else if(line.equals("")){
                 break;
             }
-            Log.info(line);
+            System.out.println(line);
             int index = line.indexOf(':');
             String tagName = line.substring(0,index).toUpperCase();
             String value   = line.substring(index +1).trim();
@@ -107,7 +100,7 @@ public class EchoHttpd {
         requestIn.close();
     }
     /**
-     * read one line
+     * read one line from InputStream
      */
     public String readLine(InputStream in,ByteArrayOutputStream byteArrayOutputStream) throws IOException{
         ByteArrayOutputStream sb = new ByteArrayOutputStream();
