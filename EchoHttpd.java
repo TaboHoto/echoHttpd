@@ -10,12 +10,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class EchoHttpd {
-    static private final int DEFAULT_PROXY_PORT = 8080;
-    static private final byte[] RESPONSE = (
-        "HTTP/1.0 200 OK\r\n" +
-        "Content-type: text/plain\r\n" +
-        "Connection: close\r\n" +
-        "\r\n").getBytes();
+    private static final int DEFAULT_PROXY_PORT = 8080;
+    private static final byte[] RESPONSE = (
+        "HTTP/1.0 200 OK\r\n"
+      + "Content-type: text/plain\r\n"
+      + "Connection: close\r\n"
+      + "\r\n").getBytes();
     private ServerSocket serverSocket;
 
     public static void usage() {
